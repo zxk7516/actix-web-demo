@@ -39,7 +39,7 @@ async fn get_all_link(pool: web::Data<Pool>) -> Result<Vec<Link>, diesel::result
 fn add_single_link(
     pool: web::Data<Pool>,
     item: web::Json<LinkJson>,
-) -> std::result::Result<Link, diesel::result::Error> {
+) -> Result<Link, diesel::result::Error> {
     use crate::schema::links::dsl::*;
     let db_connection = pool.get().unwrap();
     match links
