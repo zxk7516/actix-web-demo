@@ -1,0 +1,52 @@
+use crate::models::{Link, LinkJson, LinkNew};
+use crate::Pool;
+
+use actix_web::http::StatusCode;
+use actix_web::{web, Error, HttpResponse};
+use anyhow::Result;
+use diesel::dsl::insert_into;
+use diesel::prelude::*;
+use diesel::RunQueryDsl;
+
+pub async fn home() -> Result<HttpResponse, Error> {
+    Ok(HttpResponse::build(StatusCode::OK)
+        .content_type("text/html; charset=utf-8")
+        .body(include_str!("../templates/index.html")))
+}
+pub async fn add_link(
+    pool: web::Data<Pool>,
+    item: web::Json<LinkJson>,
+) -> Result<HttpResponse, Error> {
+    Ok(web::block(move || add_single_link(pool, item))
+        .await
+        .map(|link| HttpResponse::Created().json(link))
+        .map_err(|_| HttpResponse::InternalServerError())?)
+}
+
+fn add_single_link(
+    pool: web::Data<Pool>,
+    item: web::Json<LinkJson>,
+) -> std::result::Result<Link, diesel::result::Error> {
+    use crate::schema::links::dsl::*;
+    let db_connection = pool.get().unwrap();
+    match links
+        .filter(link.eq(&item.link))
+        .first::<Link>(&db_connection)
+    {
+        Ok(result) => Ok(result),
+        Err(_) => {
+            let new_link = LinkNew {
+                link: &item.link,
+                title: &item.title,
+                date_created: &format!("{}", chrono::Local::now().naive_local()),
+            };
+            insert_into(links)
+                .values(&new_link)
+                .execute(&db_connection)
+                .expect("Error saving new link");
+
+            let result = links.order(id.desc()).first(&db_connection).unwrap();
+            Ok(result)
+        }
+    }
+}
