@@ -1,0 +1,12 @@
+### add link
+POST http://localhost:8080/addLink
+Content-Type: application/json
+
+{
+    "link": "http://www.qq.com",
+    "title": "news site"
+}
+
+
+### get link
+GET http://localhost:8080/getLinks

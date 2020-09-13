@@ -22,6 +22,19 @@ pub async fn add_link(
         .map(|link| HttpResponse::Created().json(link))
         .map_err(|_| HttpResponse::InternalServerError())?)
 }
+pub async fn get_links(pool: web::Data<Pool>) -> Result<HttpResponse, Error> {
+    Ok(get_all_link(pool)
+        .await
+        .map(|links| HttpResponse::Ok().json(links))
+        .map_err(|_| HttpResponse::InternalServerError())?)
+}
+
+async fn get_all_link(pool: web::Data<Pool>) -> Result<Vec<Link>, diesel::result::Error> {
+    use crate::schema::links::dsl::*;
+    let db_connection = pool.get().unwrap();
+    let result = links.load::<Link>(&db_connection)?;
+    Ok(result)
+}
 
 fn add_single_link(
     pool: web::Data<Pool>,

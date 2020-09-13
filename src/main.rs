@@ -25,7 +25,8 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .data(database_pool.clone())
             .route("/", web::get().to(routes::home))
-            .route("/add_link", web::post().to(routes::add_link))
+            .route("/addLink", web::post().to(routes::add_link))
+            .route("/getLinks", web::get().to(routes::get_links))
     })
     .bind("127.0.0.1:8080")?
     .run()
