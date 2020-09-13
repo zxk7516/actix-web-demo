@@ -6,19 +6,18 @@ mod models;
 mod routes;
 mod schema;
 
-use diesel::{
-    r2d2::{self, ConnectionManager},
-    SqliteConnection,
-};
+use diesel::r2d2::{self, ConnectionManager};
+//use diesel::SqliteConnection as DbConnection;
+use diesel::MysqlConnection as DbConnection;
 
-pub type Pool = r2d2::Pool<ConnectionManager<SqliteConnection>>;
+pub type Pool = r2d2::Pool<ConnectionManager<DbConnection>>;
 
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
     dotenv::dotenv().ok();
     let database_url: String = std::env::var("DATABASE_URL").expect("DATABASE_URL not found");
     let database_pool = Pool::builder()
-        .build(ConnectionManager::<SqliteConnection>::new(database_url))
+        .build(ConnectionManager::<DbConnection>::new(database_url))
         .expect("database pool failed");
 
     HttpServer::new(move || {
