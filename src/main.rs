@@ -8,7 +8,8 @@ mod schema;
 
 use diesel::r2d2::{self, ConnectionManager};
 //use diesel::SqliteConnection as DbConnection;
-use diesel::MysqlConnection as DbConnection;
+//use diesel::MysqlConnection as DbConnection;
+use diesel::PgConnection as DbConnection;
 
 pub type Pool = r2d2::Pool<ConnectionManager<DbConnection>>;
 

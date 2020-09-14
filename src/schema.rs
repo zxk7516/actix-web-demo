@@ -1,6 +1,6 @@
 table! {
     links (id) {
-        id -> Integer,
+        id -> Int4,
         link -> Varchar,
         title -> Varchar,
         date_created -> Varchar,
