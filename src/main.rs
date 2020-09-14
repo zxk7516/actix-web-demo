@@ -12,7 +12,7 @@ use diesel::MysqlConnection as DbConnection;
 
 pub type Pool = r2d2::Pool<ConnectionManager<DbConnection>>;
 
-#[actix_rt::main]
+#[actix_web::main]
 async fn main() -> std::io::Result<()> {
     dotenv::dotenv().ok();
     let database_url: String = std::env::var("DATABASE_URL").expect("DATABASE_URL not found");
