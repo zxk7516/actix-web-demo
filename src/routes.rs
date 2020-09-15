@@ -50,8 +50,7 @@ fn add_single_link(
         Err(_) => {
             let new_link = LinkNew {
                 link: &item.link,
-                title: &item.title,
-                date_created: &format!("{}", chrono::Local::now().naive_local()),
+                title: &item.title
             };
             insert_into(links)
                 .values(&new_link)
