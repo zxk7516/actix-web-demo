@@ -1,6 +1,6 @@
 #[macro_use]
 extern crate diesel;
-use actix_web::{web, App, HttpServer};
+use actix_web::{ App, HttpServer};
 
 mod models;
 mod routes;
@@ -24,9 +24,9 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(move || {
         App::new()
             .data(database_pool.clone())
-            .route("/", web::get().to(routes::home))
-            .route("/addLink", web::post().to(routes::add_link))
-            .route("/getLinks", web::get().to(routes::get_links))
+            .service(routes::home)
+            .service(routes::add_link)
+            .service(routes::get_links)
     })
     .bind("127.0.0.1:8080")?
     .run()

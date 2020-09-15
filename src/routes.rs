@@ -2,17 +2,20 @@ use crate::models::{Link, LinkJson, LinkNew};
 use crate::Pool;
 
 use actix_web::http::StatusCode;
-use actix_web::{web, Error, HttpResponse};
+use actix_web::{get, post, web, Error, HttpResponse};
 use anyhow::Result;
 use diesel::dsl::insert_into;
 use diesel::prelude::*;
 use diesel::RunQueryDsl;
 
+#[get("/")]
 pub async fn home() -> Result<HttpResponse, Error> {
     Ok(HttpResponse::build(StatusCode::OK)
         .content_type("text/html; charset=utf-8")
         .body(include_str!("../templates/index.html")))
 }
+
+#[post("addLink")]
 pub async fn add_link(
     pool: web::Data<Pool>,
     item: web::Json<LinkJson>,
@@ -22,6 +25,7 @@ pub async fn add_link(
         .map(|link| HttpResponse::Created().json(link))
         .map_err(|_| HttpResponse::InternalServerError())?)
 }
+#[get("getLinks")]
 pub async fn get_links(pool: web::Data<Pool>) -> Result<HttpResponse, Error> {
     Ok(get_all_link(pool)
         .await
@@ -50,7 +54,7 @@ fn add_single_link(
         Err(_) => {
             let new_link = LinkNew {
                 link: &item.link,
-                title: &item.title
+                title: &item.title,
             };
             insert_into(links)
                 .values(&new_link)
